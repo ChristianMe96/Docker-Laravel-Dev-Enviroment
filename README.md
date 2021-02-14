@@ -28,3 +28,6 @@ Available commands:
     update .................................... Update the Docker environment
 ```
 
+## Open Tasks
+
+- [ ] Make XDebug work on local development.
