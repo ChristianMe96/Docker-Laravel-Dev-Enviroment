@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+
+  # Nginx Service
+  nginx:
+    image: nginx:alpine
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./:/var/www:ro
+      - ./.docker/nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      - backend
+
+  # Backend Service
+  backend:
+    build:
+      context: ./.docker/backend
+      target: backend
+    restart: unless-stopped
+    volumes:
+      - ./:/var/www
+      - ./.docker/backend/config/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+    depends_on:
+      - mysql
+      - redis
+
+  # Worker Service
+  worker:
+    build:
+      context: ./.docker/backend
+      target: worker
+    restart: unless-stopped
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - backend
+
+  # MYSQL Service
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "laravel"
+      MYSQL_USER: "root"
+      MYSQL_PASSWORD: "root"
+    volumes:
+      - ./.docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf:ro
+      - mysqldata:/var/lib/mysql
+    ports:
+      - 3306:3306
+
+  # Redis Service
+  redis:
+    image: redis:6-alpine
+    restart: unless-stopped
+    command: [ "redis-server", "--appendonly", "yes" ]
+    volumes:
+      - redisdata:/data
+
+# Volumes
+volumes:
+
+  mysqldata:
+      driver: local
+
+  redisdata:
+      driver: local
