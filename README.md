@@ -1,3 +1,10 @@
+## Pre installed
+
+- [Laravel Horizon](https://laravel.com/docs/8.x/horizon)
+- [Laravel Telescope](https://laravel.com/docs/8.x/telescope)
+- [barryvdh/laravel-ide-helper](https://github.com/barryvdh/laravel-ide-helper)
+
+
 ## Develop Script for the Docker Containers
 
 ```
@@ -21,8 +28,3 @@ Available commands:
     update .................................... Update the Docker environment
 ```
 
-## Pre installed
-
-- [Laravel Horizon](https://laravel.com/docs/8.x/horizon)
-- [Laravel Telescope](https://laravel.com/docs/8.x/telescope)
-- [barryvdh/laravel-ide-helper](https://github.com/barryvdh/laravel-ide-helper)
