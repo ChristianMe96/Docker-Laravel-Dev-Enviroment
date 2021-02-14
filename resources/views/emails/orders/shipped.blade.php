@@ -3,9 +3,8 @@
 
     Your order has been shipped!
 
-    @component('mail::button', ['url' => 'https://www.google.de', 'color' => 'success'])
-        View Order
-    @endcomponent
+    <h1>TEST</h1>
+
 
     Thanks,<br>
     {{ config('app.name') }}

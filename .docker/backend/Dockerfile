@@ -1,9 +1,8 @@
 FROM php:8.0-fpm-alpine as backend
 
-# Application environment variable
 ARG APP_ENV
 
-LABEL maintainer="Christian Meinhard"
+LABEL maintainer="Christian Meinhard <christian.meinhard@live.com>"
 
 ARG TIME_ZONE='Europe/Berlin'
 ENV DEFAULT_TZ ${TIME_ZONE}
@@ -11,10 +10,18 @@ ENV DEFAULT_TZ ${TIME_ZONE}
 WORKDIR /var/www
 
 # Import extension installer
-COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/bin/
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
 # Install extensions
-RUN install-php-extensions bcmath pdo_mysql redis xdebug
+RUN install-php-extensions bcmath pdo_mysql redis
+
+# Install the xdebug extension
+RUN if [ ${APP_ENV} = local ]; then \
+    install-php-extensions xdebug \
+;fi
+
+# Install pcntl for Laravel/Horizon
+RUN docker-php-ext-install pcntl
 
 # Install Composer
 COPY --from=composer:2.0 /usr/bin/composer /usr/local/bin/composer
@@ -42,4 +49,4 @@ USER www-data
 FROM backend as worker
 
 # Start worker
-CMD ["php", "/var/www/artisan", "queue:work"]
+CMD ["php", "/var/www/artisan", "horizon"]
